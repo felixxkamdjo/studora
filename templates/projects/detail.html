@@ -1,124 +1,142 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ project.title }} — Studora{% endblock %}
+{% block topbar_title %}Détail du projet{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-lg-8">
-    <div class="card border-0 shadow-sm mb-4">
-      <div class="card-body p-4">
 
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <h4 class="fw-bold mb-0">{{ project.title }}</h4>
+<!-- Breadcrumb -->
+<nav style="font-size:.78rem; color:var(--text-secondary); margin-bottom:20px;">
+  {% if user.is_teacher %}
+    <a href="{% url 'project_list_teacher' %}" style="color:var(--text-secondary);text-decoration:none;">Mes projets</a>
+  {% else %}
+    <a href="{% url 'project_list_student' %}" style="color:var(--text-secondary);text-decoration:none;">Projets disponibles</a>
+  {% endif %}
+  <i class="bi bi-chevron-right" style="font-size:.65rem;margin:0 6px;"></i>
+  <span style="color:var(--text-primary);font-weight:500;">{{ project.title }}</span>
+</nav>
+
+<div class="row g-4">
+
+  <!-- Main -->
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body">
+
+        <div class="d-flex align-items-start justify-content-between mb-3">
+          <h1 style="font-size:1.15rem; font-weight:700; margin:0;">{{ project.title }}</h1>
           {% if project.status == 'open' %}
             <span class="badge bg-success">Ouvert</span>
           {% elif project.status == 'closed' %}
-            <span class="badge bg-warning text-dark">Fermé</span>
+            <span class="badge bg-warning">Fermé</span>
           {% else %}
             <span class="badge bg-secondary">Terminé</span>
           {% endif %}
         </div>
 
-        <div class="mb-3 text-muted small">
-          <i class="bi bi-tag me-1"></i>{{ project.get_domain_display }}
-          &nbsp;·&nbsp;
-          <i class="bi bi-person me-1"></i>{{ project.teacher.get_full_name }}
-          &nbsp;·&nbsp;
-          <i class="bi bi-calendar me-1"></i>{{ project.created_at|date:"d/m/Y" }}
+        <div style="display:flex; flex-wrap:wrap; gap:16px; font-size:.78rem; color:var(--text-secondary); margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border-light);">
+          <span><i class="bi bi-tag me-1"></i>{{ project.get_domain_display }}</span>
+          <span><i class="bi bi-person me-1"></i>{{ project.teacher.get_full_name }}</span>
+          <span><i class="bi bi-calendar me-1"></i>{{ project.created_at|date:"d/m/Y" }}</span>
+          <span><i class="bi bi-people me-1"></i>{{ project.accepted_count }} / {{ project.max_students }} place(s)</span>
         </div>
 
-        <hr />
-        <p class="card-text">{{ project.description|linebreaks }}</p>
-
-        <div class="mt-3">
-          <span class="text-muted small">
-            <i class="bi bi-people me-1"></i>
-            {{ project.accepted_count }} / {{ project.max_students }} place(s) occupée(s)
-          </span>
+        <div style="font-size:.875rem; line-height:1.7; color:var(--text-primary);">
+          {{ project.description|linebreaks }}
         </div>
 
       </div>
     </div>
   </div>
 
+  <!-- Sidebar -->
   <div class="col-lg-4">
 
-    <!-- Actions enseignant -->
     {% if user.is_teacher and project.teacher == user %}
-      <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-          <h6 class="fw-bold mb-3">Actions</h6>
-          <div class="d-grid gap-2">
-            <a href="{% url 'project_edit' project.pk %}" class="btn btn-outline-secondary btn-sm">
-              <i class="bi bi-pencil me-1"></i>Modifier
-            </a>
-            <a href="{% url 'project_delete' project.pk %}" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash me-1"></i>Supprimer
-            </a>
-          </div>
+
+      <!-- Teacher actions -->
+      <div class="card mb-3">
+        <div class="card-header d-flex align-items-center gap-2">
+          <i class="bi bi-gear" style="color:var(--accent);"></i>
+          <span style="font-size:.875rem;font-weight:600;">Actions</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <a href="{% url 'project_edit' project.pk %}" class="btn btn-outline-secondary btn-sm w-100">
+            <i class="bi bi-pencil"></i>Modifier le projet
+          </a>
+          <a href="{% url 'project_delete' project.pk %}" class="btn btn-outline-danger btn-sm w-100">
+            <i class="bi bi-trash"></i>Supprimer
+          </a>
         </div>
       </div>
 
-      <!-- Candidatures reçues -->
-      <div class="card border-0 shadow-sm">
+      <!-- Applications received -->
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-people" style="color:var(--accent);"></i>
+            <span style="font-size:.875rem;font-weight:600;">Candidatures</span>
+          </div>
+          <span class="badge bg-primary">{{ project.applications.count }}</span>
+        </div>
         <div class="card-body">
-          <h6 class="fw-bold mb-3">
-            Candidatures
-            <span class="badge bg-primary ms-1">
-              {{ project.applications.count }}
-            </span>
-          </h6>
           {% for application in project.applications.all %}
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+            <div class="item-row">
               <div>
-                <p class="mb-0 fw-semibold small">
-                  {{ application.student.get_full_name }}
-                </p>
-                <span class="badge
-                  {% if application.status == 'pending' %}bg-warning text-dark
+                <div style="font-size:.83rem;font-weight:600;">{{ application.student.get_full_name }}</div>
+                <span class="badge mt-1
+                  {% if application.status == 'pending' %}bg-warning
                   {% elif application.status == 'accepted' %}bg-success
-                  {% else %}bg-danger{% endif %} small">
+                  {% else %}bg-danger{% endif %}">
                   {{ application.get_status_display }}
                 </span>
               </div>
-              <a href="{% url 'review_application' application.pk %}"
-                 class="btn btn-sm btn-outline-primary">
+              <a href="{% url 'review_application' application.pk %}" class="btn btn-outline-primary btn-sm">
                 Voir
               </a>
             </div>
           {% empty %}
-            <p class="text-muted small">Aucune candidature reçue.</p>
+            <div class="empty-state" style="padding:16px;">
+              <div class="empty-state-desc">Aucune candidature reçue.</div>
+            </div>
           {% endfor %}
         </div>
       </div>
+
     {% endif %}
 
-    <!-- Action étudiant -->
     {% if user.is_student %}
-      <div class="card border-0 shadow-sm">
+      <div class="card">
+        <div class="card-header d-flex align-items-center gap-2">
+          <i class="bi bi-send" style="color:var(--accent);"></i>
+          <span style="font-size:.875rem;font-weight:600;">Votre candidature</span>
+        </div>
         <div class="card-body">
           {% if user_application %}
-            <h6 class="fw-bold mb-2">Votre candidature</h6>
+            <div style="font-size:.8rem; color:var(--text-secondary); margin-bottom:8px;">Statut actuel :</div>
             <span class="badge
-              {% if user_application.status == 'pending' %}bg-warning text-dark
+              {% if user_application.status == 'pending' %}bg-warning
               {% elif user_application.status == 'accepted' %}bg-success
               {% else %}bg-danger{% endif %}">
               {{ user_application.get_status_display }}
             </span>
           {% elif project.is_open and not project.is_full %}
-            <div class="d-grid">
-              <a href="{% url 'apply' project.pk %}" class="btn btn-primary">
-                <i class="bi bi-send me-1"></i>Postuler à ce projet
-              </a>
-            </div>
+            <p style="font-size:.8rem;color:var(--text-secondary);margin-bottom:14px;">
+              Ce projet est ouvert aux candidatures.
+            </p>
+            <a href="{% url 'apply' project.pk %}" class="btn btn-primary w-100">
+              <i class="bi bi-send"></i>Postuler à ce projet
+            </a>
           {% elif project.is_full %}
-            <p class="text-muted small mb-0">
-              <i class="bi bi-x-circle me-1"></i>Ce projet est complet.
-            </p>
+            <div style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-secondary);">
+              <i class="bi bi-x-circle" style="color:var(--danger);"></i>
+              Ce projet est complet.
+            </div>
           {% else %}
-            <p class="text-muted small mb-0">
-              <i class="bi bi-lock me-1"></i>Ce projet est fermé.
-            </p>
+            <div style="display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text-secondary);">
+              <i class="bi bi-lock" style="color:var(--warning);"></i>
+              Ce projet est fermé.
+            </div>
           {% endif %}
         </div>
       </div>

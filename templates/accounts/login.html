@@ -1,38 +1,43 @@
+<!-- ══════════════════════════════════════════════════════════
+     login.html
+════════════════════════════════════════════════════════════ -->
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
 {% block title %}Connexion — Studora{% endblock %}
+{% block topbar_title %}Connexion{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card shadow-sm border-0 mt-4">
-      <div class="card-body p-4">
+<div style="min-height:calc(100vh - var(--topbar-h) - 80px); display:flex; align-items:center; justify-content:center;">
+  <div style="width:100%; max-width:420px;">
 
-        <div class="text-center mb-4">
-          <i class="bi bi-box-arrow-in-right text-primary fs-1"></i>
-          <h4 class="mt-2 fw-bold">Connexion</h4>
-          <p class="text-muted small">Accédez à votre espace Studora</p>
-        </div>
+    <!-- Card header accent -->
+    <div style="background:var(--accent); border-radius:var(--radius-md) var(--radius-md) 0 0; padding:28px 32px 24px; text-align:center;">
+      <div style="width:48px;height:48px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.4rem;color:#fff;">
+        <i class="bi bi-mortarboard-fill"></i>
+      </div>
+      <h2 style="font-size:1.15rem;font-weight:700;color:#fff;margin:0 0 4px;">Connexion</h2>
+      <p style="font-size:.8rem;color:rgba(255,255,255,.7);margin:0;">Accédez à votre espace Studora</p>
+    </div>
 
+    <div class="card" style="border-radius:0 0 var(--radius-md) var(--radius-md) !important; border-top:none !important;">
+      <div class="card-body" style="padding:28px 32px !important;">
         <form method="post" novalidate>
           {% csrf_token %}
           {{ form|crispy }}
-          <div class="d-grid mt-3">
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-box-arrow-in-right me-1"></i>Se connecter
-            </button>
-          </div>
+          <button type="submit" class="btn btn-primary w-100 mt-2" style="padding:10px !important;">
+            <i class="bi bi-box-arrow-in-right"></i>Se connecter
+          </button>
         </form>
-
-        <hr />
-        <p class="text-center text-muted small mb-0">
-          Pas encore de compte ?
-          <a href="{% url 'register' %}">S'inscrire</a>
-        </p>
-
+        <div style="border-top:1px solid var(--border); margin:20px 0 0; padding-top:16px; text-align:center;">
+          <span style="font-size:.8rem; color:var(--text-secondary);">
+            Pas encore de compte ?
+            <a href="{% url 'register' %}" style="color:var(--accent); font-weight:600; text-decoration:none;">S'inscrire</a>
+          </span>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 {% endblock %}

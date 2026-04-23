@@ -1,66 +1,80 @@
 {% extends 'base.html' %}
 
 {% block title %}Dashboard — Studora{% endblock %}
+{% block topbar_title %}Tableau de bord{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'project_list_student' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-search"></i>Parcourir les projets
+  </a>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+
+<!-- Page header -->
+<div class="page-header">
   <div>
-    <h4 class="fw-bold mb-0">Bonjour, {{ user.get_full_name }} 👋</h4>
-    <p class="text-muted small mb-0">Tableau de bord étudiant</p>
+    <h1 class="page-header-title">Bonjour, {{ user.get_full_name }} 👋</h1>
+    <p class="page-header-sub">Voici un aperçu de votre activité</p>
   </div>
-  <a href="{% url 'project_list_student' %}" class="btn btn-primary">
-    <i class="bi bi-search me-1"></i>Parcourir les projets
-  </a>
 </div>
 
-<!-- Statistiques -->
+<!-- Stat cards -->
 <div class="row g-3 mb-4">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-send text-primary fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ total_applications }}</h3>
-      <p class="text-muted small mb-0">Candidatures envoyées</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="bi bi-send"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-label">Candidatures envoyées</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-check-circle text-success fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ accepted }}</h3>
-      <p class="text-muted small mb-0">Acceptées</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ accepted }}</div>
+        <div class="stat-label">Acceptées</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-hourglass-split text-warning fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ pending }}</h3>
-      <p class="text-muted small mb-0">En attente</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon yellow"><i class="bi bi-hourglass-split"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ pending }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-folder2-open text-info fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ available_projects }}</h3>
-      <p class="text-muted small mb-0">Projets disponibles</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon cyan"><i class="bi bi-folder2-open"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ available_projects }}</div>
+        <div class="stat-label">Projets disponibles</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Mes candidatures récentes -->
-<div class="card border-0 shadow-sm">
-  <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
-    <h6 class="fw-bold mb-0">
-      <i class="bi bi-file-earmark-text me-2 text-primary"></i>
-      Mes candidatures récentes
-    </h6>
-    <a href="{% url 'my_applications' %}" class="btn btn-sm btn-outline-primary">
-      Voir tout
+<!-- Recent applications -->
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-file-earmark-text" style="color:var(--accent);"></i>
+      <span style="font-size:.875rem; font-weight:600;">Mes candidatures récentes</span>
+    </div>
+    <a href="{% url 'my_applications' %}" class="btn btn-outline-primary btn-sm">
+      Voir tout <i class="bi bi-arrow-right"></i>
     </a>
   </div>
-  <div class="card-body">
+  <div class="card-body" style="padding:0 !important;">
     {% if my_applications %}
       <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
+        <table class="table table-hover mb-0">
+          <thead>
             <tr>
               <th>Projet</th>
               <th>Enseignant</th>
@@ -72,24 +86,20 @@
           <tbody>
             {% for application in my_applications %}
               <tr>
-                <td class="fw-semibold">{{ application.project.title }}</td>
-                <td class="text-muted small">
-                  {{ application.project.teacher.get_full_name }}
-                </td>
+                <td style="font-weight:600;">{{ application.project.title }}</td>
+                <td style="color:var(--text-secondary);">{{ application.project.teacher.get_full_name }}</td>
                 <td>
                   <span class="badge
-                    {% if application.status == 'pending' %}bg-warning text-dark
+                    {% if application.status == 'pending' %}bg-warning
                     {% elif application.status == 'accepted' %}bg-success
                     {% else %}bg-danger{% endif %}">
                     {{ application.get_status_display }}
                   </span>
                 </td>
-                <td class="text-muted small">
-                  {{ application.applied_at|date:"d/m/Y" }}
-                </td>
+                <td style="color:var(--text-secondary);">{{ application.applied_at|date:"d/m/Y" }}</td>
                 <td>
                   <a href="{% url 'project_detail' application.project.pk %}"
-                     class="btn btn-sm btn-outline-primary">
+                     class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-eye"></i>
                   </a>
                 </td>
@@ -99,13 +109,16 @@
         </table>
       </div>
     {% else %}
-      <div class="text-center py-4">
-        <i class="bi bi-inbox text-muted fs-2"></i>
-        <p class="text-muted small mt-2 mb-0">
-          Vous n'avez pas encore postulé à un projet.
-        </p>
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+        <div class="empty-state-title">Aucune candidature</div>
+        <div class="empty-state-desc">Vous n'avez pas encore postulé à un projet.</div>
+        <a href="{% url 'project_list_student' %}" class="btn btn-primary btn-sm">
+          <i class="bi bi-search"></i>Parcourir les projets
+        </a>
       </div>
     {% endif %}
   </div>
 </div>
+
 {% endblock %}

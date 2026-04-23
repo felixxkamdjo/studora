@@ -19,7 +19,7 @@ build:
 	docker compose up --build -d
 
 up:
-	docker compose up -d
+	docker compose up -d && docker compose exec web python seed.py
 
 down:
 	docker compose down

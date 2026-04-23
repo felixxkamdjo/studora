@@ -18,8 +18,8 @@ def run():
     print('Création des utilisateurs...')
 
     teacher1 = User.objects.create_user(
-        username='teacher@univ.fr',
-        email='teacher@univ.fr',
+        username='teacher@univ.cm',
+        email='teacher@univ.cm',
         password='password123',
         first_name='Jean',
         last_name='Dupont',
@@ -27,8 +27,8 @@ def run():
     )
 
     teacher2 = User.objects.create_user(
-        username='teacher2@univ.fr',
-        email='teacher2@univ.fr',
+        username='teacher2@univ.cm',
+        email='teacher2@univ.cm',
         password='password123',
         first_name='Marie',
         last_name='Mbarga',
@@ -36,8 +36,8 @@ def run():
     )
 
     student1 = User.objects.create_user(
-        username='student@univ.fr',
-        email='student@univ.fr',
+        username='student@univ.cm',
+        email='student@univ.cm',
         password='password123',
         first_name='Paul',
         last_name='Nkono',
@@ -45,8 +45,8 @@ def run():
     )
 
     student2 = User.objects.create_user(
-        username='student2@univ.fr',
-        email='student2@univ.fr',
+        username='student2@univ.cm',
+        email='student2@univ.cm',
         password='password123',
         first_name='Ines',
         last_name='Talla',
@@ -54,8 +54,8 @@ def run():
     )
 
     student3 = User.objects.create_user(
-        username='student3@univ.fr',
-        email='student3@univ.fr',
+        username='student3@univ.cm',
+        email='student3@univ.cm',
         password='password123',
         first_name='Boris',
         last_name='Kamga',
@@ -132,11 +132,11 @@ def run():
 
     print('\nDonnées de test créées avec succès !\n')
     print('Comptes disponibles :')
-    print('  Enseignant 1 : teacher@univ.fr  / password123')
-    print('  Enseignant 2 : teacher2@univ.fr / password123')
-    print('  Étudiant 1   : student@univ.fr  / password123')
-    print('  Étudiant 2   : student2@univ.fr / password123')
-    print('  Étudiant 3   : student3@univ.fr / password123')
+    print('  Enseignant 1 : teacher@univ.cm  / password123')
+    print('  Enseignant 2 : teacher2@univ.cm / password123')
+    print('  Étudiant 1   : student@univ.cm  / password123')
+    print('  Étudiant 2   : student2@univ.cm / password123')
+    print('  Étudiant 3   : student3@univ.cm / password123')
 
 
 if __name__ == '__main__':

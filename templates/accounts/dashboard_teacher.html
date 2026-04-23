@@ -1,125 +1,136 @@
 {% extends 'base.html' %}
 
 {% block title %}Dashboard — Studora{% endblock %}
+{% block topbar_title %}Tableau de bord{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-circle"></i>Nouveau projet
+  </a>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div class="page-header">
   <div>
-    <h4 class="fw-bold mb-0">Bonjour, {{ user.get_full_name }} 👋</h4>
-    <p class="text-muted small mb-0">Tableau de bord enseignant</p>
+    <h1 class="page-header-title">Bonjour, {{ user.get_full_name }} 👋</h1>
+    <p class="page-header-sub">Voici un aperçu de votre activité enseignante</p>
   </div>
-  <a href="{% url 'project_create' %}" class="btn btn-primary">
-    <i class="bi bi-plus-circle me-1"></i>Nouveau projet
-  </a>
 </div>
 
-<!-- Statistiques -->
+<!-- Stat cards -->
 <div class="row g-3 mb-4">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-folder2-open text-primary fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ total_projects }}</h3>
-      <p class="text-muted small mb-0">Projets total</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="bi bi-folder2-open"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_projects }}</div>
+        <div class="stat-label">Projets créés</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-unlock text-success fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ open_projects }}</h3>
-      <p class="text-muted small mb-0">Projets ouverts</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="bi bi-unlock"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ open_projects }}</div>
+        <div class="stat-label">Projets ouverts</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-file-earmark-text text-info fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ total_applications }}</h3>
-      <p class="text-muted small mb-0">Candidatures reçues</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon cyan"><i class="bi bi-file-earmark-text"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-label">Candidatures reçues</div>
+      </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card border-0 shadow-sm text-center p-3">
-      <i class="bi bi-hourglass-split text-warning fs-2 mb-2"></i>
-      <h3 class="fw-bold mb-0">{{ pending_applications }}</h3>
-      <p class="text-muted small mb-0">En attente</p>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon yellow"><i class="bi bi-hourglass-split"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ pending_applications }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Two columns -->
 <div class="row g-4">
 
-  <!-- Mes projets récents -->
+  <!-- My projects -->
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
-        <h6 class="fw-bold mb-0">
-          <i class="bi bi-folder2 me-2 text-primary"></i>Mes projets
-        </h6>
-        <a href="{% url 'project_list_teacher' %}" class="btn btn-sm btn-outline-primary">
-          Voir tout
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-folder2" style="color:var(--accent);"></i>
+          <span style="font-size:.875rem; font-weight:600;">Mes projets récents</span>
+        </div>
+        <a href="{% url 'project_list_teacher' %}" class="btn btn-outline-primary btn-sm">
+          Voir tout <i class="bi bi-arrow-right"></i>
         </a>
       </div>
       <div class="card-body">
         {% if my_projects %}
           {% for project in my_projects %}
-            <div class="d-flex justify-content-between align-items-center
-                        mb-2 pb-2 border-bottom">
+            <div class="item-row">
               <div>
-                <p class="mb-0 fw-semibold small">{{ project.title }}</p>
-                <span class="badge
+                <div style="font-size:.85rem; font-weight:600;">{{ project.title }}</div>
+                <span class="badge mt-1
                   {% if project.status == 'open' %}bg-success
-                  {% elif project.status == 'closed' %}bg-warning text-dark
-                  {% else %}bg-secondary{% endif %} small">
+                  {% elif project.status == 'closed' %}bg-warning
+                  {% else %}bg-secondary{% endif %}">
                   {{ project.get_status_display }}
                 </span>
               </div>
-              <a href="{% url 'project_detail' project.pk %}"
-                 class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'project_detail' project.pk %}" class="btn btn-outline-secondary btn-sm">
                 <i class="bi bi-eye"></i>
               </a>
             </div>
           {% endfor %}
         {% else %}
-          <p class="text-muted small text-center py-3">
-            Aucun projet créé.
-          </p>
+          <div class="empty-state" style="padding:24px;">
+            <div class="empty-state-icon"><i class="bi bi-folder-x"></i></div>
+            <div class="empty-state-title">Aucun projet</div>
+            <div class="empty-state-desc">Créez votre premier projet.</div>
+          </div>
         {% endif %}
       </div>
     </div>
   </div>
 
-  <!-- Candidatures récentes -->
+  <!-- Recent applications -->
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-header bg-transparent border-0 pt-3">
-        <h6 class="fw-bold mb-0">
-          <i class="bi bi-people me-2 text-primary"></i>
-          Candidatures récentes
-        </h6>
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-people" style="color:var(--accent);"></i>
+        <span style="font-size:.875rem; font-weight:600;">Candidatures récentes</span>
       </div>
       <div class="card-body">
         {% if recent_applications %}
           {% for application in recent_applications %}
-            <div class="d-flex justify-content-between align-items-center
-                        mb-2 pb-2 border-bottom">
-              <div>
-                <p class="mb-0 fw-semibold small">
+            <div class="item-row">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:.85rem; font-weight:600;">
                   {{ application.student.get_full_name }}
-                </p>
-                <p class="mb-0 text-muted" style="font-size: 0.75rem;">
+                </div>
+                <div style="font-size:.75rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   {{ application.project.title }}
-                </p>
+                </div>
               </div>
-              <div class="text-end">
+              <div class="d-flex align-items-center gap-2 ms-2">
                 <span class="badge
-                  {% if application.status == 'pending' %}bg-warning text-dark
+                  {% if application.status == 'pending' %}bg-warning
                   {% elif application.status == 'accepted' %}bg-success
-                  {% else %}bg-danger{% endif %} small d-block mb-1">
+                  {% else %}bg-danger{% endif %}">
                   {{ application.get_status_display }}
                 </span>
                 {% if application.is_pending %}
                   <a href="{% url 'review_application' application.pk %}"
-                     class="btn btn-sm btn-outline-primary"
-                     style="font-size: 0.7rem;">
+                     class="btn btn-outline-primary btn-sm">
                     Traiter
                   </a>
                 {% endif %}
@@ -127,9 +138,11 @@
             </div>
           {% endfor %}
         {% else %}
-          <p class="text-muted small text-center py-3">
-            Aucune candidature reçue.
-          </p>
+          <div class="empty-state" style="padding:24px;">
+            <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+            <div class="empty-state-title">Aucune candidature</div>
+            <div class="empty-state-desc">Vous n'avez reçu aucune candidature.</div>
+          </div>
         {% endif %}
       </div>
     </div>
