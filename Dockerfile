@@ -6,12 +6,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Dependances système pour build
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
+# Dependances systeme pour build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libpq-dev \
     && rm -rf /var/lib/apt/lists/*
-
+        
 # Installer pip + deps
 COPY requirements.txt .
 RUN pip install --upgrade pip \
@@ -26,7 +25,7 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Copier seulement les dépendances installees
+# Copier seulement les dependances installees
 COPY --from=builder /install /usr/local
 
 # Copier le code
