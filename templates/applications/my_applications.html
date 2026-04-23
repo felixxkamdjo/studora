@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes candidatures — Studora{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">
+    <i class="bi bi-file-earmark-text me-2 text-primary"></i>Mes candidatures
+  </h4>
+</div>
+
+{% if applications %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for application in applications %}
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h6 class="fw-bold mb-0">{{ application.project.title }}</h6>
+              <span class="badge ms-2
+                {% if application.status == 'pending' %}bg-warning text-dark
+                {% elif application.status == 'accepted' %}bg-success
+                {% else %}bg-danger{% endif %}">
+                {{ application.get_status_display }}
+              </span>
+            </div>
+
+            <p class="text-muted small mb-2">
+              <i class="bi bi-person me-1"></i>
+              {{ application.project.teacher.get_full_name }}
+              &nbsp;·&nbsp;
+              <i class="bi bi-tag me-1"></i>
+              {{ application.project.get_domain_display }}
+            </p>
+
+            <p class="text-muted small">
+              {{ application.motivation|truncatewords:15 }}
+            </p>
+
+          </div>
+          <div class="card-footer bg-transparent border-0 d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="bi bi-calendar me-1"></i>
+              {{ application.applied_at|date:"d/m/Y" }}
+            </small>
+            <a href="{% url 'project_detail' application.project.pk %}"
+               class="btn btn-sm btn-outline-primary">
+              Voir le projet <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-3">Vous n'avez pas encore postulé à un projet.</p>
+    <a href="{% url 'project_list_student' %}" class="btn btn-primary mt-2">
+      <i class="bi bi-search me-1"></i>Parcourir les projets
+    </a>
+  </div>
+{% endif %}
+{% endblock %}

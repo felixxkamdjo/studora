@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Projets disponibles — Studora{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">
+    <i class="bi bi-search me-2 text-primary"></i>Projets disponibles
+  </h4>
+</div>
+
+<!-- Filtres -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-6">
+        <input
+          type="text"
+          name="q"
+          value="{{ query }}"
+          class="form-control"
+          placeholder="Rechercher un projet..."
+        />
+      </div>
+      <div class="col-md-4">
+        <select name="domain" class="form-select">
+          <option value="">Tous les domaines</option>
+          {% for value, label in domain_choices %}
+            <option value="{{ value }}" {% if domain == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-funnel me-1"></i>Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Liste des projets -->
+{% if projects %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for project in projects %}
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="card-title fw-bold mb-0">{{ project.title }}</h5>
+              <span class="badge bg-success ms-2">Ouvert</span>
+            </div>
+            <p class="text-muted small mb-2">
+              <i class="bi bi-tag me-1"></i>{{ project.get_domain_display }}
+              &nbsp;·&nbsp;
+              <i class="bi bi-person me-1"></i>{{ project.teacher.get_full_name }}
+            </p>
+            <p class="card-text text-muted">
+              {{ project.description|truncatewords:20 }}
+            </p>
+          </div>
+          <div class="card-footer bg-transparent border-0 d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="bi bi-people me-1"></i>
+              {{ project.accepted_count }}/{{ project.max_students }} étudiant(s)
+            </small>
+            <a href="{% url 'project_detail' project.pk %}" class="btn btn-sm btn-outline-primary">
+              Voir le projet <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if projects.has_other_pages %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if projects.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ projects.previous_page_number }}&q={{ query }}&domain={{ domain }}">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for num in projects.paginator.page_range %}
+          <li class="page-item {% if projects.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}&q={{ query }}&domain={{ domain }}">
+              {{ num }}
+            </a>
+          </li>
+        {% endfor %}
+
+        {% if projects.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ projects.next_page_number }}&q={{ query }}&domain={{ domain }}">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-3">Aucun projet disponible pour le moment.</p>
+  </div>
+{% endif %}
+{% endblock %}
