@@ -19,13 +19,18 @@ build:
 	docker compose up --build -d
 
 up:
-	docker compose up -d && docker compose exec web python seed.py
+	docker compose up -d
+	sleep 3
+	$(MAKE) migrate
+	$(MAKE) seed
 
 down:
 	docker compose down
 
 restart:
-	docker compose down && docker compose up -d
+	docker compose down
+	sleep 3
+	$(MAKE) seed
 
 logs:
 	docker compose logs -f web
